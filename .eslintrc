@@ -1,0 +1,30 @@
+ {
+  "extends": "airbnb-base",
+  "rules": {
+    "comma-dangle": [2, "never"], 
+    "no-console": "off",
+    "no-underscore-dangle": "off",
+    "class-methods-use-this": "off",
+    "linebreak-style": "off",
+    "import/prefer-default-export":"off",
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        "devDependencies": true,
+        "optionalDependencies": true,
+        "peerDependencies": false
+      }
+    ]
+  }, 
+  "env": {
+    "node": true,
+    "mocha": true
+  }, 
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaVersion": 8,
+    "allowImportExportEverywhere": false,
+    "codeFrame": false
+  }
+  
+}

@@ -1,0 +1,27 @@
+{
+  "name": "server-blog-react",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "nodemon --exec NODE_ENV=production ./node_modules/.bin/babel-node src/index.js",
+    "dev": "nodemon src/index.js --exec \"node -r dotenv/config ./node_modules/.bin/babel-node \"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "faisal arkan",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "cors": "^2.8.4",
+    "errorhandler": "^1.5.0",
+    "express": "^4.15.2",
+    "moment": "^2.19.3",
+    "morgan": "^1.9.0",
+    "pg": "^7.4.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "dotenv": "^4.0.0"
+  }
+}
