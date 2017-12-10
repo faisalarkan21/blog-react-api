@@ -46,7 +46,7 @@ const insertRows = async (tableField, tableValue, setValue, response) => {
     // it's will rollback and send Internal Server Error into client
     console.log(err);
     await client.query('ROLLBACK');
-    return response.sendStatus(500);
+    return response.status(500).send(err);
   } finally {
     client.release();
   }
