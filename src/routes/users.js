@@ -15,15 +15,19 @@ router.get('/', async (req, res) => {
 router.post('/login', async (req, res) => {
   const { password, email } = req.body;
   const { rows } = await db.query('select * from users where email = $1', [email]);
-  console.log(rows[0]);
-  if (rows[0].password === auth.getHash(password)) {
-    return res.send('sama');
+  if (rows[0]) {
+    if (rows[0].password === auth.getHash(password)) {
+      const token = auth.getToken();
+      console.log(token);
+      res.status(200).send(Object.assign({ token }, { rows }));
+    }
   }
-  return res.send('tidak');
+  return res.send(404).send(rows[0]);
 });
 
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
+  console.log(id);
   const { rows } = await db.query('select * from users where user_id = $1', [id]);
   res.send(rows);
 });
