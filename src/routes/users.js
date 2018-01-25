@@ -27,8 +27,9 @@ router.post('/login', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
-  console.log(id);
+  // console.log(id);
   const { rows } = await db.query('select * from users where user_id = $1', [id]);
+  console.log(rows);
   res.send(rows);
 });
 

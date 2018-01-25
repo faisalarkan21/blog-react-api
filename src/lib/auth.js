@@ -4,6 +4,8 @@ import Crypto from 'crypto-js';
 const getToken = () => jwt.sign({ coba: 'yeahcoba' }, 'rahasia', { expiresIn: '1h' });
 
 /*
+@ Written by Faisal Arkan
+
 Author Note :
 https://code.google.com/archive/p/crypto-js/
 

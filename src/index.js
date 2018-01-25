@@ -40,7 +40,7 @@ app.get('/', (req, res) => {
 });
 
 const checkError = (req, res, next) => {
-  console.log(res);
+  // console.log(res);
 };
 
 
