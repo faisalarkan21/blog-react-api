@@ -1,5 +1,6 @@
 import express from 'express';
 
+
 import * as db from '../lib/db';
 import * as auth from '../lib/auth';
 import { currentDate } from '../lib/date';
@@ -8,7 +9,11 @@ const router = express.Router();
 
 
 router.get('/', async (req, res) => {
-  const { rows } = await db.query('SELECT * FROM users');
+  const { rows } = await db.query(`
+  SELECT users.user_id, username, password, email, 
+  created_on, last_login, account_role.role_id, account_role.grant_date
+  FROM public.users inner join public.account_role 
+  on public.users.user_id = public.account_role.user_id;`);
   res.send(rows);
 });
 
