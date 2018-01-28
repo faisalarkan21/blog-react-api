@@ -1,7 +1,7 @@
 import express from 'express';
 import * as db from '../lib/db';
 import * as auth from '../lib/auth';
-import { momentFormat } from '../lib/moment-config';
+import * as helper from '../lib/helper';
 
 const router = express.Router();
 
@@ -13,12 +13,9 @@ router.get('/', async (req, res) => {
   FROM public.users inner join public.account_role 
   on public.users.user_id = public.account_role.user_id;`);
 
-  rows.forEach((item) => {
-    item.created_on = momentFormat(item.created_on, 'MMMM Do YYYY');
-    item.role_id = item.role_id === (1 || 'Administrator') ? 'Administrator' : 'Penulis';
-  });
+  const result = helper.reformatObjectRows(rows);
 
-  res.send(rows);
+  res.send(result);
 });
 
 router.post('/login', async (req, res) => {
@@ -44,7 +41,10 @@ router.get('/:id', async (req, res) => {
   on users.user_id = account_role.user_id where users.user_id = $1`, [id]);
 
   console.log(rows);
-  res.send(rows);
+
+  const result = helper.reformatObjectRows(rows);
+
+  res.send(result[0]);
 });
 
 router.post('/create-user', async (req, res) => {
