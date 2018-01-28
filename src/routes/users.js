@@ -1,9 +1,6 @@
 import express from 'express';
-
-
 import * as db from '../lib/db';
 import * as auth from '../lib/auth';
-import { currentDate } from '../lib/date';
 import { momentFormat } from '../lib/moment-config';
 
 const router = express.Router();

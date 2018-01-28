@@ -1,7 +1,5 @@
 import express from 'express';
-
 import * as db from '../lib/db';
-import { currentDate } from '../lib/date';
 
 const router = express.Router();
 
