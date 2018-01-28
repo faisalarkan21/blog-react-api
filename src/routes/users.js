@@ -40,7 +40,12 @@ router.post('/login', async (req, res) => {
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
   // console.log(id);
-  const { rows } = await db.query('select * from users where user_id = $1', [id]);
+  const { rows } = await db.query(`
+  SELECT users.user_id, username, password, email, 
+  created_on, last_login, account_role.role_id, account_role.grant_date
+  FROM public.users inner join public.account_role 
+  on users.user_id = account_role.user_id where users.user_id = $1`, [id]);
+
   console.log(rows);
   res.send(rows);
 });
