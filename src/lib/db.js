@@ -1,6 +1,8 @@
 import { Pool, Client } from 'pg';
-import { currentDate } from './date';
 import { error } from 'util';
+require('dotenv').config();
+
+import { currentDate } from './date';
 
 const configDb = {
   user: process.env.DB_USER,
