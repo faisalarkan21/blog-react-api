@@ -14,7 +14,6 @@ router.get('/', async (req, res) => {
   on public.users.user_id = public.account_role.user_id;`);
 
   const result = helper.reformatObjectRows(rows);
-
   res.send(result);
 });
 
@@ -25,10 +24,10 @@ router.post('/login', async (req, res) => {
     if (rows[0].password === auth.getHash(password)) {
       const token = auth.getToken();
       console.log(token);
-      res.status(200).send(Object.assign({ token }, { rows }));
+      res.send(Object.assign({ token }, { rows }));
     }
   }
-  return res.send(404).send(rows[0]);
+  return res.sendStatus(404).send(rows[0]);
 });
 
 router.get('/:id', async (req, res) => {
