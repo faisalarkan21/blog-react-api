@@ -23,11 +23,11 @@ router.post('/login', async (req, res) => {
   if (rows[0]) {
     if (rows[0].password === auth.getHash(password)) {
       const token = auth.getToken();
-      console.log(token);
-      res.send(Object.assign({ token }, { rows }));
+      // console.log(token);
+      return res.send(Object.assign({ token }, { rows }));
     }
   }
-  return res.sendStatus(404).send(rows[0]);
+  res.status(404).send([]);
 });
 
 router.get('/:id', async (req, res) => {
