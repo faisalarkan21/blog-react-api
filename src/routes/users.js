@@ -27,7 +27,7 @@ router.post('/login', async (req, res) => {
       return res.send(Object.assign({ token }, { rows }));
     }
   }
-  res.status(404).send([]);
+  return res.status(404).send([]);
 });
 
 router.get('/:id', async (req, res) => {
@@ -56,12 +56,12 @@ router.post('/create-user', async (req, res) => {
 
   const result = await db.insertRows(
     'users(username, email, password, created_on)',
-    'values($1, $2, $3, $4)  RETURNING user_id', [username, email, resultHash, currentDate], res
+    'values($1, $2, $3, $4)  RETURNING user_id', [username, email, resultHash, new Date()], res
   );
 
   await db.insertRows(
     'account_role(user_id,role_id,grant_date)',
-    'values($1, $2, $3)', [result[0].user_id, roleId, currentDate], res
+    'values($1, $2, $3)', [result[0].user_id, roleId, new Date()], res
   );
 
   await result.client.query('COMMIT');
