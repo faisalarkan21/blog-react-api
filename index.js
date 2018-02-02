@@ -2,9 +2,13 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
 import cors from 'cors';
+import dotenv from 'dotenv';
 
-import indexController from './routes/index';
-import userController from './routes/users';
+
+import indexController from './src/routes/index';
+import userController from './src/routes/users';
+
+dotenv.config();
 
 
 const errorhandler = require('errorhandler');
@@ -27,6 +31,12 @@ const corsOptions = {
   },
   optionsSuccessStatus: 200
 };
+
+
+/**
+ * @constant combined to see all infomation
+ * @constant dev to see only http code response
+ */
 
 app.use(cors(corsOptions));
 app.use(morgan('dev'));
