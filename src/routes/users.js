@@ -33,18 +33,18 @@ router.post('/login', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
-  // console.log(id);
-  const { rows } = await db.query(`
+
+  const { rowCount, rows } = await db.query(`
   SELECT users.user_id, username, password, email, 
   created_on, last_login, account_role.role_id, account_role.grant_date
   FROM public.users inner join public.account_role 
   on users.user_id = account_role.user_id where users.user_id = $1`, [id]);
 
-  console.log(rows);
+  if (rowCount !== 0) {
+    res.send(rows[0]);
+  }
 
-  const result = helper.reformatObjectRows(rows);
-
-  res.send(result[0]);
+  res.sendStatus(404);
 });
 
 
@@ -94,6 +94,17 @@ router.post('/update/:id', async (req, res) => {
 
   await result.client.query('COMMIT');
   return res.sendStatus(200);
+});
+
+router.post('/delete/:id', async (req, res) => {
+  const { id } = req.params;
+
+  const { rowCount } = await db.query('DELETE FROM users WHERE user_id=($1)', [id]);
+
+  if (rowCount !== 0) {
+    return res.sendStatus(200);
+  }
+  return res.sendStatus(404);
 });
 
 
