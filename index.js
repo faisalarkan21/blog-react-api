@@ -8,8 +8,6 @@ import dotenv from 'dotenv';
 import indexController from './src/routes/index';
 import userController from './src/routes/users';
 
-dotenv.config();
-
 
 const errorhandler = require('errorhandler');
 

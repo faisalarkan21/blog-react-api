@@ -77,14 +77,8 @@ router.post('/create-user', async (req, res) => {
 });
 
 
-/**
- * @description on develop
- */
-
 router.post('/update/:id', async (req, res) => {
   const { id } = req.params;
-  console.log(id);
-  console.log(req.body);
 
   const {
     username, email, role_id
@@ -92,29 +86,14 @@ router.post('/update/:id', async (req, res) => {
 
   const roleCode = role_id === 'Administrator' ? 1 : 2;
 
-  const client = await db.pool.connect();
-  try {
-    await client.query('BEGIN');
+  const result = await db.updateRows(`users SET username=($1), 
+                email=($2) WHERE user_id = ($3)`, [username, email, id]);
 
-    const sqlUser = `UPDATE public.users
-    SET username=($1), email=($2) WHERE user_id = ($3) returning user_id;`;
+  db.updateRows(`account_role
+                SET role_id=($1) WHERE user_id = ($2)`, [roleCode, id]);
 
-    const sqlRole = `UPDATE public.account_role
-    SET role_id=($1) WHERE user_id = ($2);`;
-
-
-    await client.query(sqlUser, [username, email, id]);
-
-    await client.query(sqlRole, [roleCode, id]);
-  } catch (err) {
-    // it's will rollback and send Internal Server Error into client
-    console.log(err);
-    await client.query('ROLLBACK');
-  } finally {
-    client.release();
-  }
-
-  res.sendStatus(200);
+  await result.client.query('COMMIT');
+  return res.sendStatus(200);
 });
 
 

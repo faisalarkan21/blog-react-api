@@ -55,11 +55,20 @@ const insertRows = async (tableField, tableValue, setValue, response) => {
 };
 
 
-const updateRows = async (tableField, tableValue, setValue, response) => {
+/**
+  * Template Update
+  * INSERT INTO users(name, email) VALUES($1, $2)
+  * @param {rawQuery}. users SET username=($1), email=($2) WHERE...
+  * @param {setValue}. [username, email, password, currentDate]
+  * @param {response}. router response from express
+  */
+
+const updateRows = async (rawQuery, setValue, response) => {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
-    const baseSql = `UPDATE ${tableField} ${tableValue}`;
+    const baseSql = `UPDATE ${rawQuery}`;
+    console.log(baseSql);
     const { rows } = await client.query(baseSql, setValue);
     return (Object.assign({ client }, rows));
   } catch (err) {
@@ -73,5 +82,5 @@ const updateRows = async (tableField, tableValue, setValue, response) => {
 };
 
 
-export { testConnect, query, insertRows, pool };
+export { testConnect, query, insertRows, updateRows, pool };
 
