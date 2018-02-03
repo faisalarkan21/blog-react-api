@@ -5,7 +5,6 @@ import * as helper from '../lib/helper';
 
 const router = express.Router();
 
-
 router.get('/', async (req, res) => {
   const { rows } = await db.query(`
   SELECT users.user_id, username, password, email, 
@@ -24,7 +23,6 @@ router.post('/login', async (req, res) => {
   if (rows[0]) {
     if (rows[0].password === auth.getHash(password)) {
       const token = auth.getToken();
-
       // update last_login user
       const result = await db.updateRows(`users SET last_login=($1)
     WHERE email = ($2)`, [new Date(), email]);
@@ -40,17 +38,17 @@ router.get('/:id', async (req, res) => {
   const { id } = req.params;
 
   const { rowCount, rows } = await db.query(`
-  SELECT users.user_id, username, password, email, last_modified,
+  SELECT 
+  users.user_id, username, password, email, last_modified,
   created_on, last_login, account_role.role_id, account_role.grant_date
   FROM public.users inner join public.account_role 
   on users.user_id = account_role.user_id where users.user_id = $1`, [id]);
-
+  console.log(rows);
   if (rowCount !== 0) {
     const result = helper.reformatObjectRows(rows);
-    res.send(result[0]);
+    return res.send(result[0]);
   }
-
-  res.sendStatus(404);
+  return res.sendStatus(404);
 });
 
 
@@ -93,7 +91,8 @@ router.post('/update/:id', async (req, res) => {
   const roleCode = role_id === 'Administrator' ? 1 : 2;
 
   const result = await db.updateRows(`users SET username=($1), 
-                email=($2),last_modified=($3) WHERE user_id = ($4) returning user_id`, [username, email, new Date(), id]);
+                email=($2),last_modified=($3) WHERE user_id = 
+                ($4) returning user_id`, [username, email, new Date(), id]);
 
   db.updateRows(`account_role
                 SET role_id=($1) WHERE user_id = ($2)`, [roleCode, id]);
@@ -113,6 +112,28 @@ router.post('/delete/:id', async (req, res) => {
   return res.sendStatus(404);
 });
 
+
+router.get('/data/list-statistic-users', async (req, res) => {
+  const rowsLastLogin = await db.query(`
+  SELECT 
+  users.user_id, username, password, email,
+  created_on, last_login, account_role.role_id, account_role.grant_date
+  FROM public.users inner join public.account_role
+  on public.users.user_id = public.account_role.user_id where users.last_login < now() limit 5`);
+  const resultLastLogin = helper.reformatObjectRows(rowsLastLogin.rows);
+
+  const { rows } = await db.query(`
+  select 
+    count(*) filter (where account_role.role_id = 1) as totalAdmin, 
+    count(*) filter (where account_role.role_id = 2) as totalWriter,
+    count(*) as totalUser 
+  from 
+    account_role;`);
+
+  const mergeRows = Object.assign({ resultLastLogin }, rows[0]);
+
+  res.send(mergeRows);
+});
 
 export default router;
 
