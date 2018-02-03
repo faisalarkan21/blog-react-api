@@ -24,7 +24,12 @@ router.post('/login', async (req, res) => {
   if (rows[0]) {
     if (rows[0].password === auth.getHash(password)) {
       const token = auth.getToken();
-      console.log(token);
+
+      // update last_login user
+      const result = await db.updateRows(`users SET last_login=($1)
+    WHERE email = ($2)`, [new Date(), email]);
+      await result.client.query('COMMIT');
+
       return res.send(Object.assign({ token }, { rows }));
     }
   }
@@ -35,13 +40,14 @@ router.get('/:id', async (req, res) => {
   const { id } = req.params;
 
   const { rowCount, rows } = await db.query(`
-  SELECT users.user_id, username, password, email, 
+  SELECT users.user_id, username, password, email, last_modified,
   created_on, last_login, account_role.role_id, account_role.grant_date
   FROM public.users inner join public.account_role 
   on users.user_id = account_role.user_id where users.user_id = $1`, [id]);
 
   if (rowCount !== 0) {
-    res.send(rows[0]);
+    const result = helper.reformatObjectRows(rows);
+    res.send(result[0]);
   }
 
   res.sendStatus(404);
@@ -87,13 +93,13 @@ router.post('/update/:id', async (req, res) => {
   const roleCode = role_id === 'Administrator' ? 1 : 2;
 
   const result = await db.updateRows(`users SET username=($1), 
-                email=($2) WHERE user_id = ($3)`, [username, email, id]);
+                email=($2),last_modified=($3) WHERE user_id = ($4) returning user_id`, [username, email, new Date(), id]);
 
   db.updateRows(`account_role
                 SET role_id=($1) WHERE user_id = ($2)`, [roleCode, id]);
-
+  console.log(result[0].user_id);
   await result.client.query('COMMIT');
-  return res.sendStatus(200);
+  return res.send(result[0]);
 });
 
 router.post('/delete/:id', async (req, res) => {
