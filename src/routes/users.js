@@ -94,9 +94,9 @@ router.post('/update/:id', async (req, res) => {
                 email=($2),last_modified=($3) WHERE user_id = 
                 ($4) returning user_id`, [username, email, new Date(), id]);
 
-  db.updateRows(`account_role
+  await db.updateRows(`account_role
                 SET role_id=($1) WHERE user_id = ($2)`, [roleCode, id]);
-  console.log(result[0].user_id);
+
   await result.client.query('COMMIT');
   return res.send(result[0]);
 });
@@ -113,7 +113,7 @@ router.post('/delete/:id', async (req, res) => {
 });
 
 
-router.get('/data/list-statistic-users', async (req, res) => {
+router.get('/data/list-stat-users', async (req, res) => {
   const rowsLastLogin = await db.query(`
   SELECT 
   users.user_id, username, password, email,
@@ -130,7 +130,9 @@ router.get('/data/list-statistic-users', async (req, res) => {
   from 
     account_role;`);
 
-  const mergeRows = Object.assign({ resultLastLogin }, rows[0]);
+  const resultStatUsers = rows[0];
+
+  const mergeRows = Object.assign({ resultLastLogin }, { resultStatUsers });
 
   res.send(mergeRows);
 });
