@@ -11,9 +11,11 @@ router.get('/', async (req, res) => {
   created_on, last_login, account_role.role_id, account_role.grant_date
   FROM public.users inner join public.account_role 
   on public.users.user_id = public.account_role.user_id;`);
-
   const result = helper.reformatObjectRows(rows);
-  res.send(result);
+  if (rows.length !== 0) {
+    return res.send(result);
+  }
+  return res.sendStatus(404);
 });
 
 router.post('/login', async (req, res) => {
@@ -120,6 +122,7 @@ router.get('/data/list-stat-users', async (req, res) => {
   created_on, last_login, account_role.role_id, account_role.grant_date
   FROM public.users inner join public.account_role
   on public.users.user_id = public.account_role.user_id where users.last_login < now() limit 5`);
+
   const resultLastLogin = helper.reformatObjectRows(rowsLastLogin.rows);
 
   const { rows } = await db.query(`
@@ -134,7 +137,10 @@ router.get('/data/list-stat-users', async (req, res) => {
 
   const mergeRows = Object.assign({ resultLastLogin }, { resultStatUsers });
 
-  res.send(mergeRows);
+  if (mergeRows.resultLastLogin.length !== 0 && mergeRows.resultStatUsers.totaluser !== '0') {
+    return res.send(mergeRows);
+  }
+  return res.sendStatus(404);
 });
 
 export default router;
