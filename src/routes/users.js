@@ -33,7 +33,7 @@ router.post('/login', async (req, res) => {
       return res.send(Object.assign({ token }, { rows }));
     }
   }
-  return res.status(404).send([]);
+  return res.sendStatus(404);
 });
 
 router.get('/:id', async (req, res) => {
