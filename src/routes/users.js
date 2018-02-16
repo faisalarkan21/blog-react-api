@@ -20,7 +20,10 @@ router.get('/', async (req, res) => {
 
 router.post('/login', async (req, res) => {
   const { password, email } = req.body;
-  const { rows } = await db.query('select * from users where email = $1', [email]);
+  const { rows } = await db.query(`SELECT users.user_id, username, password, email, 
+  created_on, last_login, account_role.role_id
+  FROM public.users inner join public.account_role 
+  on public.users.user_id = public.account_role.user_id where email = $1`, [email]);
   console.log(rows);
   if (rows[0]) {
     if (rows[0].password === auth.getHash(password)) {

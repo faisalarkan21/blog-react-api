@@ -10,7 +10,8 @@ Author Note :
 https://code.google.com/archive/p/crypto-js/
 
 I made a mistake when I named this implementation SHA-3.
-It should be named Keccak[c=2d]. Each of the SHA-3 functions is based on an instance of the Keccak algorithm,
+It should be named Keccak[c=2d]. Each of the SHA-3
+functions is based on an instance of the Keccak algorithm,
 which NIST selected as the winner of the SHA-3 competition,
 but those SHA-3 functions won't produce hashes identical to Keccak.
 */
