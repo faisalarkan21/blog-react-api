@@ -17,7 +17,7 @@ const app = express();
  * @param undefined it's means fetch origin came from browser or postman etc.
  */
 
-const siteUrl = ['http://127.0.0.1:8080', undefined];
+const siteUrl = ['http://127.0.0.1:8080', 'http://0.0.0.0:8080', undefined];
 
 const corsOptions = {
   origin(origin, callback) {
@@ -37,7 +37,7 @@ const corsOptions = {
  */
 
 app.use(cors(corsOptions));
-app.use(morgan('dev'));
+app.use(morgan());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: false
